@@ -1,14 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 18 10:42:04 2022
+import pyxel
 
-@author: Peio
-"""
 
-# on rajoute random
-import pyxel, random
-
-TRANSPARENT_COLOR = 0
+def draw_rect(x,y,w,h,c):
+    pyxel.rect(x-w/2,y-h/2,w,h,c)
 
 class Jeu:
     def __init__(self):
@@ -19,10 +13,12 @@ class Jeu:
 
         # position initiale du vaisseau
         # (origine des positions : coin haut gauche)
-        self.raquette_a = 60
-        self.raquette_b = 60
-        self.balle_x = 60
-        self.balle_y = 60
+        self.raquette_a = 64
+        self.raquette_b = 64
+        self.raquette_w = 4
+        self.raquette_h = 16
+        self.balle_x = 64
+        self.balle_y = 64
 
         # chargement des images
         pyxel.load("res.pyxres")
@@ -36,14 +32,18 @@ class Jeu:
     def deplacement(self):
         """déplacement avec les touches de directions"""
 
-        if pyxel.btn(pyxel.KEY_RIGHT) and self.raquette_b<120:
+        if pyxel.btn(pyxel.KEY_RIGHT) and self.raquette_b<128-self.raquette_h/2:
             self.raquette_b += 1
-        if pyxel.btn(pyxel.KEY_LEFT) and self.raquette_b>0:
+        if pyxel.btn(pyxel.KEY_LEFT) and self.raquette_b>0+self.raquette_h/2:
             self.raquette_b += -1
-        if pyxel.btn(pyxel.KEY_DOWN) and self.raquette_a<120:
+        if pyxel.btn(pyxel.KEY_DOWN) and self.raquette_a<128-self.raquette_h/2:
             self.raquette_a += 1
-        if pyxel.btn(pyxel.KEY_UP) and self.raquette_a>0:
+        if pyxel.btn(pyxel.KEY_UP) and self.raquette_a>0+self.raquette_h/2:
             self.raquette_a += -1
+
+    def collision_balle(self):
+        if self.balle_y < self.raquette_a and self.balle_y > self.raquette_a-self.raquette_h:
+            pyxel.quit()
             
 
 
@@ -52,24 +52,16 @@ class Jeu:
 
         # deplacement du vaisseau
         self.deplacement()
+        self.collision_balle()
 
-    # =====================================================
-    # == DRAW
-    # =====================================================
+
     def draw(self):
         """création et positionnement des objets (30 fois par seconde)"""
-
-        # vide la fenetre
         pyxel.cls(0)
-       
-
-
         pyxel.camera()
-
-            # vaisseau (carre 8x8)
-        pyxel.rect(17, self.raquette_a, 6, 12, 5)
-        pyxel.rect(103, self.raquette_b, 6, 12, 4)
-        pyxel.rect(self.balle_x, self.balle_y, 8, 8, 1)
+        draw_rect(20, self.raquette_a, self.raquette_w, self.raquette_h, 5)
+        draw_rect(108, self.raquette_b, self.raquette_w, self.raquette_h, 4)
+        draw_rect(self.balle_x, self.balle_y, 8, 8, 1)
 
 
 Jeu()
