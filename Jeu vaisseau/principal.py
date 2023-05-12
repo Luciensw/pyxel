@@ -4,6 +4,7 @@ TRANSPARENT_COLOR = 0
 TUILE_ASTEROID =(2,1)
 TUILE_ESPACE =(2,4)
 TUILE_BONUS = (1,2)
+TUILE_MUNITION = (1,3)
 TUILE_MONSTRE = (2,2)
 
 class Jeu:
@@ -20,6 +21,9 @@ class Jeu:
         
         #score
         self.score = 0
+
+        #munition
+        self.munition = 10
 
         # initialisation des tirs
         self.tirs_liste = []
@@ -57,9 +61,10 @@ class Jeu:
 
     def tirs_creation(self):
         """création d'un tir avec la barre d'espace"""
-
-        if pyxel.btnr(pyxel.KEY_SPACE):
-            self.tirs_liste.append([self.vaisseau_x, self.vaisseau_y-8])
+        if self.munition > 0:
+            if pyxel.btnr(pyxel.KEY_SPACE):
+                self.tirs_liste.append([self.vaisseau_x, self.vaisseau_y-8])
+                self.munition -= 1
 
 
     def tirs_deplacement(self):
@@ -174,6 +179,10 @@ class Jeu:
                     print("bonus")
                     self.vies += 1
                     pyxel.tilemap(0).pset(xi, yi, TUILE_ESPACE)
+                if tuile == TUILE_MUNITION:
+                    print("bonus")
+                    self.munition += 10
+                    pyxel.tilemap(0).pset(xi, yi, TUILE_ESPACE)
 
     # =====================================================
     # == UPDATE
@@ -233,6 +242,9 @@ class Jeu:
             
             #affichage score
             pyxel.text(5, 5, f"SCORE : {self.score}", 7)
+
+            #affichage munitions
+            pyxel.text(5, 120, f"Munitions : {self.munition}", 7)
 
             # explosions (cercles de plus en plus grands)
             for explosion in self.explosions_liste:
