@@ -1,8 +1,10 @@
-# A ajouter :
-- score
+# A faire :
 - bonus (bouclier...)
-- munitions limitées
 - d'autre type d'ennemi
+
+# Fait :
+- munitions limitées
+- score
 
 # Conseils :
 - note pour les première -> pyxel
