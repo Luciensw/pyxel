@@ -10,7 +10,7 @@ TUILE_MONSTRE = (2,2)
 class Jeu:
     def __init__(self):
         # taille de la fenetre 128x128 pixels
-        pyxel.init(128, 128, title="Nuit du c0de")
+        pyxel.init(128, 128, title="Nuit du c0de", quit_key=pyxel.KEY_G)
 
         # position initiale du vaisseau (x = 0, y = 0 : coin haut gauche)
         self.vaisseau_x = 60
@@ -18,6 +18,9 @@ class Jeu:
 
         # vies
         self.vies = 4
+
+        # bouclier
+        self.bouclier = False
         
         #score
         self.score = 0
@@ -57,6 +60,8 @@ class Jeu:
             self.vaisseau_y += 1
         if pyxel.btn(pyxel.KEY_Z) and self.vaisseau_y>0:
             self.vaisseau_y += -1
+        if pyxel.btn(pyxel.KEY_F):
+            self.bouclier = not self.bouclier
 
 
     def tirs_creation(self):
@@ -97,7 +102,7 @@ class Jeu:
         """disparition du vaisseau et d'un ennemi si contact"""
 
         for ennemi in self.ennemis_liste:
-            if ennemi[0] <= self.vaisseau_x+8 and ennemi[1] <= self.vaisseau_y+8 and ennemi[0]+8 >= self.vaisseau_x and ennemi[1]+8 >= self.vaisseau_y:
+            if ennemi[0] <= self.vaisseau_x+8 and ennemi[1] <= self.vaisseau_y+8 and ennemi[0]+8 >= self.vaisseau_x and ennemi[1]+8 >= self.vaisseau_y and not self.bouclier:
                 self.ennemis_liste.remove(ennemi)
                 self.vies -= 1
                 # on ajoute l'explosion
@@ -146,7 +151,7 @@ class Jeu:
         for yi in range(y1, y2 + 1):
             for xi in range(x1, x2 + 1):
                 tuile = pyxel.tilemap(0).pget(xi, yi)
-                if tuile == TUILE_ASTEROID:
+                if tuile == TUILE_ASTEROID and not self.bouclier:
                     print("asteroid")
                     self.vies -= 1
                     pyxel.tilemap(0).pset(xi, yi, TUILE_ESPACE)
@@ -257,6 +262,9 @@ class Jeu:
 
             # vaisseau (carre 8x8)
             pyxel.blt(self.vaisseau_x, self.vaisseau_y, 0, 0, 0, 8, 8, TRANSPARENT_COLOR)
+
+            if self.bouclier:
+                pyxel.blt(self.vaisseau_x, self.vaisseau_y, 0, 32, 0, 8, 8, TRANSPARENT_COLOR)
 
             # tirs
             for tir in self.tirs_liste:
