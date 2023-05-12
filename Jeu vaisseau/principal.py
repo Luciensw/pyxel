@@ -17,6 +17,9 @@ class Jeu:
 
         # vies
         self.vies = 4
+        
+        #score
+        self.score = 0
 
         # initialisation des tirs
         self.tirs_liste = []
@@ -104,8 +107,8 @@ class Jeu:
                 if ennemi[0] <= tir[0]+8 and ennemi[0]+8 >= tir[0] and ennemi[1]+8 >= tir[1]:
                     self.ennemis_liste.remove(ennemi)
                     self.tirs_liste.remove(tir)
-                    # on ajoute l'explosion
                     self.explosions_creation(ennemi[0], ennemi[1])
+                    self.score += 1
 
 
     def explosions_creation(self, x, y):
@@ -227,7 +230,9 @@ class Jeu:
            
             pyxel.bltm(0, 0, 0, 192, (self.scroll_y // 4) % 128, 128, 128)
             pyxel.bltm(0, 0, 0, 0, self.scroll_y,  128, 128, TRANSPARENT_COLOR)
-           
+            
+            #affichage score
+            pyxel.text(5, 5, f"SCORE : {self.score}", 7)
 
             # explosions (cercles de plus en plus grands)
             for explosion in self.explosions_liste:
@@ -236,7 +241,7 @@ class Jeu:
 
             # affichage des vies            
             #pyxel.text(5,5+self.scroll_y, 'VIES:'+ str(self.vies), 7)
-            pyxel.text(5,5, 'VIES:'+ str(self.vies), 7)
+            pyxel.text(100, 5, 'VIES:'+ str(self.vies), 7)
 
             # vaisseau (carre 8x8)
             pyxel.blt(self.vaisseau_x, self.vaisseau_y, 0, 0, 0, 8, 8, TRANSPARENT_COLOR)
