@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 18 10:42:04 2022
-
-@author: Peio
-"""
-
-# on rajoute random
 import pyxel, random
 
 TRANSPARENT_COLOR = 0
@@ -16,13 +8,10 @@ TUILE_MONSTRE = (2,2)
 
 class Jeu:
     def __init__(self):
-
         # taille de la fenetre 128x128 pixels
-        # ne pas modifier
         pyxel.init(128, 128, title="Nuit du c0de")
 
-        # position initiale du vaisseau
-        # (origine des positions : coin haut gauche)
+        # position initiale du vaisseau (x = 0, y = 0 : coin haut gauche)
         self.vaisseau_x = 60
         self.vaisseau_y = 60
 
@@ -42,7 +31,7 @@ class Jeu:
         self.asteroid_liste = []
 
         # chargement des images
-        pyxel.load("res.pyxres")
+        pyxel.load("images.pyxres")
         pyxel.image(0).rect(16, 16, 8, 8, TRANSPARENT_COLOR)
         
         self.scroll_y = 1080
@@ -50,19 +39,16 @@ class Jeu:
         pyxel.run(self.update, self.draw)
        
         
-        
-
-
     def deplacement(self):
-        """déplacement avec les touches de directions"""
+        """déplacement avec les touches de directions : zqsd"""
 
-        if pyxel.btn(pyxel.KEY_RIGHT) and self.vaisseau_x<120:
+        if pyxel.btn(pyxel.KEY_D) and self.vaisseau_x<120:
             self.vaisseau_x += 1
-        if pyxel.btn(pyxel.KEY_LEFT) and self.vaisseau_x>0:
+        if pyxel.btn(pyxel.KEY_Q) and self.vaisseau_x>0:
             self.vaisseau_x += -1
-        if pyxel.btn(pyxel.KEY_DOWN) and self.vaisseau_y<120:
+        if pyxel.btn(pyxel.KEY_S) and self.vaisseau_y<120:
             self.vaisseau_y += 1
-        if pyxel.btn(pyxel.KEY_UP) and self.vaisseau_y>0:
+        if pyxel.btn(pyxel.KEY_Z) and self.vaisseau_y>0:
             self.vaisseau_y += -1
 
 
