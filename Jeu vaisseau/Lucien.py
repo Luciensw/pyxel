@@ -1,28 +1,18 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 18 10:42:04 2022
-
-@author: Peio
-"""
-
-# on rajoute random
 import pyxel, random
 
 TRANSPARENT_COLOR = 0
 TUILE_ASTEROID =(2,1)
 TUILE_ESPACE =(2,4)
 TUILE_BONUS = (1,2)
+TUILE_MUNITION = (1,3)
 TUILE_MONSTRE = (2,2)
 
 class Jeu:
     def __init__(self):
-
         # taille de la fenetre 128x128 pixels
-        # ne pas modifier
         pyxel.init(128, 128, title="Nuit du c0de", quit_key=pyxel.KEY_G)
 
-        # position initiale du vaisseau
-        # (origine des positions : coin haut gauche)
+        # position initiale du vaisseau (x = 0, y = 0 : coin haut gauche)
         self.vaisseau_x = 60
         self.vaisseau_y = 60
 
@@ -31,6 +21,12 @@ class Jeu:
 
         # bouclier
         self.bouclier = False
+        
+        #score
+        self.score = 0
+
+        #munition
+        self.munition = 10
 
         # initialisation des tirs
         self.tirs_liste = []
@@ -53,28 +49,27 @@ class Jeu:
         pyxel.run(self.update, self.draw)
        
         
-        
-
-
     def deplacement(self):
-        """déplacement avec les touches de directions"""
+        """déplacement avec les touches de directions : zqsd"""
 
-        if pyxel.btn(pyxel.KEY_RIGHT) and self.vaisseau_x<120:
+        if pyxel.btn(pyxel.KEY_D) and self.vaisseau_x<120:
             self.vaisseau_x += 1
-        if pyxel.btn(pyxel.KEY_LEFT) and self.vaisseau_x>0:
+        if pyxel.btn(pyxel.KEY_Q) and self.vaisseau_x>0:
             self.vaisseau_x += -1
-        if pyxel.btn(pyxel.KEY_DOWN) and self.vaisseau_y<120:
+        if pyxel.btn(pyxel.KEY_S) and self.vaisseau_y<120:
             self.vaisseau_y += 1
-        if pyxel.btn(pyxel.KEY_UP) and self.vaisseau_y>0:
+        if pyxel.btn(pyxel.KEY_Z) and self.vaisseau_y>0:
             self.vaisseau_y += -1
         if pyxel.btn(pyxel.KEY_F):
             self.bouclier = not self.bouclier
 
+
     def tirs_creation(self):
         """création d'un tir avec la barre d'espace"""
-
-        if pyxel.btnr(pyxel.KEY_SPACE):
-            self.tirs_liste.append([self.vaisseau_x, self.vaisseau_y-8])
+        if self.munition > 0:
+            if pyxel.btnr(pyxel.KEY_SPACE):
+                self.tirs_liste.append([self.vaisseau_x, self.vaisseau_y-8])
+                self.munition -= 1
 
 
     def tirs_deplacement(self):
@@ -122,8 +117,8 @@ class Jeu:
                 if ennemi[0] <= tir[0]+8 and ennemi[0]+8 >= tir[0] and ennemi[1]+8 >= tir[1]:
                     self.ennemis_liste.remove(ennemi)
                     self.tirs_liste.remove(tir)
-                    # on ajoute l'explosion
                     self.explosions_creation(ennemi[0], ennemi[1])
+                    self.score += 1
 
 
     def explosions_creation(self, x, y):
@@ -189,6 +184,10 @@ class Jeu:
                     print("bonus")
                     self.vies += 1
                     pyxel.tilemap(0).pset(xi, yi, TUILE_ESPACE)
+                if tuile == TUILE_MUNITION:
+                    print("bonus")
+                    self.munition += 10
+                    pyxel.tilemap(0).pset(xi, yi, TUILE_ESPACE)
 
     # =====================================================
     # == UPDATE
@@ -245,7 +244,12 @@ class Jeu:
            
             pyxel.bltm(0, 0, 0, 192, (self.scroll_y // 4) % 128, 128, 128)
             pyxel.bltm(0, 0, 0, 0, self.scroll_y,  128, 128, TRANSPARENT_COLOR)
-           
+            
+            #affichage score
+            pyxel.text(5, 5, f"SCORE : {self.score}", 7)
+
+            #affichage munitions
+            pyxel.text(5, 120, f"Munitions : {self.munition}", 7)
 
             # explosions (cercles de plus en plus grands)
             for explosion in self.explosions_liste:
@@ -254,13 +258,13 @@ class Jeu:
 
             # affichage des vies            
             #pyxel.text(5,5+self.scroll_y, 'VIES:'+ str(self.vies), 7)
-            pyxel.text(5,5, 'VIES:'+ str(self.vies), 7)
+            pyxel.text(100, 5, 'VIES:'+ str(self.vies), 7)
 
             # vaisseau (carre 8x8)
             pyxel.blt(self.vaisseau_x, self.vaisseau_y, 0, 0, 0, 8, 8, TRANSPARENT_COLOR)
 
             if self.bouclier:
-                pyxel.blt(self.vaisseau_x, self.vaisseau_y, 0, 32, 0, 8, 8, TRANSPARENT_COLOR)
+                pyxel.circb(self.vaisseau_x+4, self.vaisseau_y+4, 5, 7)
 
             # tirs
             for tir in self.tirs_liste:
