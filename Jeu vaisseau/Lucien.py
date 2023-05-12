@@ -29,6 +29,9 @@ class Jeu:
         # vies
         self.vies = 4
 
+        # bouclier
+        self.bouclier = False
+
         # initialisation des tirs
         self.tirs_liste = []
 
@@ -42,7 +45,7 @@ class Jeu:
         self.asteroid_liste = []
 
         # chargement des images
-        pyxel.load("res.pyxres")
+        pyxel.load("images.pyxres")
         pyxel.image(0).rect(16, 16, 8, 8, TRANSPARENT_COLOR)
         
         self.scroll_y = 1080
@@ -64,7 +67,10 @@ class Jeu:
             self.vaisseau_y += 1
         if pyxel.btn(pyxel.KEY_UP) and self.vaisseau_y>0:
             self.vaisseau_y += -1
-
+        if pyxel.btn(pyxel.KEY_F):
+            self.bouclier = not self.bouclier
+        if pyxel.btn(pyxel.KEY_G):
+            pyxel.quit()
 
     def tirs_creation(self):
         """création d'un tir avec la barre d'espace"""
@@ -152,7 +158,7 @@ class Jeu:
         for yi in range(y1, y2 + 1):
             for xi in range(x1, x2 + 1):
                 tuile = pyxel.tilemap(0).pget(xi, yi)
-                if tuile == TUILE_ASTEROID:
+                if tuile == TUILE_ASTEROID and not self.bouclier:
                     print("asteroid")
                     self.vies -= 1
                     pyxel.tilemap(0).pset(xi, yi, TUILE_ESPACE)
@@ -254,6 +260,9 @@ class Jeu:
 
             # vaisseau (carre 8x8)
             pyxel.blt(self.vaisseau_x, self.vaisseau_y, 0, 0, 0, 8, 8, TRANSPARENT_COLOR)
+
+            if self.bouclier:
+                pyxel.blt(self.vaisseau_x, self.vaisseau_y, 0, 32, 0, 8, 8)
 
             # tirs
             for tir in self.tirs_liste:
