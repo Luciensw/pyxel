@@ -264,7 +264,7 @@ class Jeu:
             pyxel.blt(self.vaisseau_x, self.vaisseau_y, 0, 0, 0, 8, 8, TRANSPARENT_COLOR)
 
             if self.bouclier:
-                pyxel.blt(self.vaisseau_x, self.vaisseau_y, 0, 32, 0, 8, 8, TRANSPARENT_COLOR)
+                pyxel.circb(self.vaisseau_x+4, self.vaisseau_y+4, 5, 7)
 
             # tirs
             for tir in self.tirs_liste:
