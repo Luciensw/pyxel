@@ -6,6 +6,7 @@ TUILE_ESPACE =(2,4)
 TUILE_BONUS = (1,2)
 TUILE_MUNITION = (1,3)
 TUILE_MONSTRE = (2,2)
+TUILE_BOUCLIER = (1,4)
 
 class Jeu:
     def __init__(self):
@@ -27,6 +28,9 @@ class Jeu:
 
         #munition
         self.munition = 10
+
+        #bouclier
+        self.bouclier_activable = False
 
         # initialisation des tirs
         self.tirs_liste = []
@@ -60,7 +64,7 @@ class Jeu:
             self.vaisseau_y += 1
         if pyxel.btn(pyxel.KEY_Z) and self.vaisseau_y>0:
             self.vaisseau_y += -1
-        if pyxel.btn(pyxel.KEY_F):
+        if pyxel.btnr(pyxel.KEY_F) and self.bouclier_activable:
             self.bouclier = not self.bouclier
 
 
@@ -187,6 +191,10 @@ class Jeu:
                 if tuile == TUILE_MUNITION:
                     print("bonus")
                     self.munition += 10
+                    pyxel.tilemap(0).pset(xi, yi, TUILE_ESPACE)
+                if tuile == TUILE_BOUCLIER:
+                    print("bouclier activé")
+                    self.bouclier_activable = True
                     pyxel.tilemap(0).pset(xi, yi, TUILE_ESPACE)
 
     # =====================================================
