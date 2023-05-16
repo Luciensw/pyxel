@@ -30,7 +30,7 @@ class Jeu:
         self.munition = 10
 
         #bouclier
-        self.bouclier_activable = False
+        self.bouclier_activable = True
 
         # initialisation des tirs
         self.tirs_liste = []
@@ -66,6 +66,7 @@ class Jeu:
             self.vaisseau_y += -1
         if pyxel.btnr(pyxel.KEY_F) and self.bouclier_activable:
             self.bouclier = not self.bouclier
+            self.bouclier_activable = not self.bouclier_activable
 
 
     def tirs_creation(self):
@@ -106,9 +107,12 @@ class Jeu:
         """disparition du vaisseau et d'un ennemi si contact"""
 
         for ennemi in self.ennemis_liste:
-            if ennemi[0] <= self.vaisseau_x+8 and ennemi[1] <= self.vaisseau_y+8 and ennemi[0]+8 >= self.vaisseau_x and ennemi[1]+8 >= self.vaisseau_y and not self.bouclier:
+            if ennemi[0] <= self.vaisseau_x+8 and ennemi[1] <= self.vaisseau_y+8 and ennemi[0]+8 >= self.vaisseau_x and ennemi[1]+8 >= self.vaisseau_y:
                 self.ennemis_liste.remove(ennemi)
-                self.vies -= 1
+                if self.bouclier:
+                    self.bouclier = not self.bouclier
+                else:
+                    self.vies -= 1
                 # on ajoute l'explosion
                 self.explosions_creation(self.vaisseau_x, self.vaisseau_y)
 
@@ -155,9 +159,12 @@ class Jeu:
         for yi in range(y1, y2 + 1):
             for xi in range(x1, x2 + 1):
                 tuile = pyxel.tilemap(0).pget(xi, yi)
-                if tuile == TUILE_ASTEROID and not self.bouclier:
+                if tuile == TUILE_ASTEROID:
                     print("asteroid")
-                    self.vies -= 1
+                    if self.bouclier:
+                        self.bouclier = not self.bouclier
+                    else:
+                        self.vies -= 1
                     pyxel.tilemap(0).pset(xi, yi, TUILE_ESPACE)
                     self.explosions_creation(xi*8, self.vaisseau_y)
                     return xi*8, yi*8
@@ -193,7 +200,7 @@ class Jeu:
                     self.munition += 10
                     pyxel.tilemap(0).pset(xi, yi, TUILE_ESPACE)
                 if tuile == TUILE_BOUCLIER:
-                    print("bouclier activé")
+                    print("bouclier rechargé")
                     self.bouclier_activable = True
                     pyxel.tilemap(0).pset(xi, yi, TUILE_ESPACE)
 
