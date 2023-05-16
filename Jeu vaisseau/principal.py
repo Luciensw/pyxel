@@ -13,6 +13,9 @@ class Jeu:
         # taille de la fenetre 128x128 pixels
         pyxel.init(128, 128, title="Nuit du c0de", quit_key=pyxel.KEY_G)
 
+        # commencement du jeu
+        self.jeu_commence = False
+
         # position initiale du vaisseau (x = 0, y = 0 : coin haut gauche)
         self.vaisseau_x = 60
         self.vaisseau_y = 60
@@ -253,18 +256,16 @@ class Jeu:
 
 
         # si le vaisseau possede des vies le jeu continue
+        if not self.jeu_commence:
+            pyxel.camera(0, self.scroll_y)
+            pyxel.text(50,64+self.scroll_y, 'Appuyer sur entrée', 7)
+
         if self.vies > 0:
 
             pyxel.camera()
            
             pyxel.bltm(0, 0, 0, 192, (self.scroll_y // 4) % 128, 128, 128)
             pyxel.bltm(0, 0, 0, 0, self.scroll_y,  128, 128, TRANSPARENT_COLOR)
-            
-            #affichage score
-            pyxel.text(5, 5, f"SCORE : {self.score}", 7)
-
-            #affichage munitions
-            pyxel.text(5, 120, f"Munitions : {self.munition}", 7)
 
             # explosions (cercles de plus en plus grands)
             for explosion in self.explosions_liste:
@@ -288,6 +289,12 @@ class Jeu:
             # ennemis
             for ennemi in self.ennemis_liste:
                 pyxel.blt(ennemi[0], ennemi[1], 0, 0, 8, 8, 8)
+
+            #affichage score
+            pyxel.text(5, 5, f"SCORE : {self.score}", 7)
+
+            #affichage munitions
+            pyxel.text(5, 120, f"Munitions : {self.munition}", 7)
 
             
         # sinon: GAME OVER
